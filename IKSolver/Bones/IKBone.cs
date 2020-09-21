@@ -16,9 +16,13 @@ namespace jCaballol94.IKsolver
         public Transform realBone;
         public IKBone parent;
         public IKBone child;
+        [Header("Rotation constraint")]
         public RotationConstraintType constraintType = RotationConstraintType.NONE;
         public Vector3 constraintAxis = Vector3.up;
         public Vector2 constraintRotationLimits = Vector2.zero;
+        [Header("Roll constraint")]
+        public bool useRollConstraint = false;
+        public Vector2 constraintRollLimits = Vector2.zero;
 
         private Quaternion _realBoneRotation;
 
@@ -50,6 +54,7 @@ namespace jCaballol94.IKsolver
                 var desiredRight = desiredRotation * transform.right;
 
                 ApplyRotationConstraint(ref desiredForward);
+                ApplyRollConstraint(desiredForward, desiredRight, ref desiredUp);
 
                 transform.rotation = Quaternion.LookRotation(desiredForward, desiredUp);
             }
@@ -69,6 +74,7 @@ namespace jCaballol94.IKsolver
             var desiredRight = desiredRotation * transform.right;
 
             ApplyRotationConstraint(ref desiredForward);
+            ApplyRollConstraint(desiredForward, desiredRight, ref desiredUp);
 
             transform.rotation = Quaternion.LookRotation(desiredForward, desiredUp);
 
@@ -104,6 +110,26 @@ namespace jCaballol94.IKsolver
                     }
                     break;
             }
+        }
+
+        private void ApplyRollConstraint (Vector3 forward, Vector3 right, ref Vector3 up)
+        {
+            if (!useRollConstraint) return;
+
+            var upRoll = AngleInPlane(transform.parent.up, up, forward);
+            var rightRoll = AngleInPlane(transform.parent.right, right, forward);
+
+            var roll = rightRoll;
+            if (Mathf.Abs(upRoll) < Mathf.Abs(rightRoll))
+            {
+                roll = upRoll;
+            }
+
+            var constrainedRoll = ConstrainAngle(roll, constraintRollLimits);
+            var correction = constrainedRoll - roll;
+            var rotationCorrection = Quaternion.AngleAxis(correction, forward);
+
+            up = rotationCorrection * up;
         }
 
         public static float AngleInPlane(Vector3 from, Vector3 to, Vector3 axis)
