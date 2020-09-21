@@ -8,6 +8,8 @@ namespace jCaballol94.IKsolver
     {
         [Header("Shoulder")]
         public Transform shoulder;
+        public Transform shoulderReference;
+        public float shoulderLimit = 90f;
 
         [Header("Elbow")]
         public Transform elbow;
@@ -29,7 +31,10 @@ namespace jCaballol94.IKsolver
 
             _rootBone = shoulderGo.AddComponent<IKBone>();
             _rootBone.RealBone = shoulder;
-            _rootBone.ConstraintType = IKBone.RotationConstraintType.NONE;
+
+            _rootBone.ConstraintType = IKBone.RotationConstraintType.BALL;
+            _rootBone.ConstraintAxis = shoulderReference.localPosition - _rootBone.transform.localPosition;
+            _rootBone.ConstraintRotationLimits = Vector2.one * shoulderLimit;
 
             var elbowGO = new GameObject("ElbowIK");
 
