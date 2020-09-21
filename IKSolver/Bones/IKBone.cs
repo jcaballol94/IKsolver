@@ -13,27 +13,27 @@ namespace jCaballol94.IKsolver
             BALL
         }
 
-        public Transform RealBone { get; set; }
-        public IKBone Parent { get; set; }
-        public IKBone Child { get; set; }
-        public RotationConstraintType ConstraintType { get; set; }
-        public Vector3 ConstraintAxis { get; set; }
-        public Vector2 ConstraintRotationLimits { get; set; }
+        public Transform realBone;
+        public IKBone parent;
+        public IKBone child;
+        public RotationConstraintType constraintType = RotationConstraintType.NONE;
+        public Vector3 constraintAxis = Vector3.up;
+        public Vector2 constraintRotationLimits = Vector2.zero;
 
         private Quaternion _realBoneRotation;
 
         private void Start()
         {
-            _realBoneRotation = Quaternion.Inverse(transform.rotation) * RealBone.transform.rotation;
+            _realBoneRotation = Quaternion.Inverse(transform.rotation) * realBone.transform.rotation;
         }
 
         public void ApplyPose ()
         {
-            RealBone.rotation = transform.rotation * _realBoneRotation;
+            realBone.rotation = transform.rotation * _realBoneRotation;
 
-            if (Child)
+            if (child)
             {
-                Child.ApplyPose();
+                child.ApplyPose();
             }
         }
 
@@ -54,9 +54,9 @@ namespace jCaballol94.IKsolver
                 transform.rotation = Quaternion.LookRotation(desiredForward, desiredUp);
             }
 
-            if (Parent)
+            if (parent)
             {
-                Parent.IterateTargetPosition(tip, target);
+                parent.IterateTargetPosition(tip, target);
             }
         }
 
@@ -72,22 +72,22 @@ namespace jCaballol94.IKsolver
 
             transform.rotation = Quaternion.LookRotation(desiredForward, desiredUp);
 
-            if (Parent)
+            if (parent)
             {
-                Parent.IterateTargetRotation(tip, target);
+                parent.IterateTargetRotation(tip, target);
             }
         }
 
         private void ApplyRotationConstraint(ref Vector3 forward)
         {
-            switch (ConstraintType)
+            switch (constraintType)
             {
                 case RotationConstraintType.HINGE:
                     {
-                        var axis = transform.parent.rotation * ConstraintAxis;
+                        var axis = transform.parent.rotation * constraintAxis;
                         var hingeAngle = AngleInPlane(transform.parent.forward, forward, axis);
 
-                        hingeAngle = ConstrainAngle(hingeAngle, ConstraintRotationLimits);
+                        hingeAngle = ConstrainAngle(hingeAngle, constraintRotationLimits);
 
                         var hingeRotation = Quaternion.AngleAxis(hingeAngle, axis);
                         forward = hingeRotation * transform.parent.forward;
@@ -96,10 +96,10 @@ namespace jCaballol94.IKsolver
 
                 case RotationConstraintType.BALL:
                     {
-                        var axis = transform.parent.rotation * ConstraintAxis;
+                        var axis = transform.parent.rotation * constraintAxis;
 
                         var desiredRotation = Quaternion.FromToRotation(axis, forward);
-                        var constrainedRotation = Quaternion.RotateTowards(Quaternion.identity, desiredRotation, ConstraintRotationLimits.x);
+                        var constrainedRotation = Quaternion.RotateTowards(Quaternion.identity, desiredRotation, constraintRotationLimits.x);
                         forward = constrainedRotation * axis;
                     }
                     break;

@@ -27,14 +27,14 @@ namespace jCaballol94.IKsolver
                 go.transform.rotation = Quaternion.LookRotation(head.position - tail.position, parent ? parent.transform.up : transform.up);
 
                 var bone = go.AddComponent<IKBone>();
-                bone.RealBone = tail;
-                bone.Parent = parent;
-                bone.ConstraintType = IKBone.RotationConstraintType.BALL;
-                bone.ConstraintAxis = Vector3.forward;
-                bone.ConstraintRotationLimits = Vector3.one * maxRotation;
+                bone.realBone = tail;
+                bone.parent = parent;
+                bone.constraintType = IKBone.RotationConstraintType.BALL;
+                bone.constraintAxis = Vector3.forward;
+                bone.constraintRotationLimits = Vector3.one * maxRotation;
                 if (parent)
                 {
-                    parent.Child = bone;
+                    parent.child = bone;
                 }
                 else
                 {
@@ -50,12 +50,12 @@ namespace jCaballol94.IKsolver
             tipGo.transform.rotation = parent.transform.rotation;
 
             var tipBone = tipGo.AddComponent<IKBone>();
-            tipBone.RealBone = head;
-            tipBone.Parent = parent;
-            parent.Child = tipBone;
-            tipBone.ConstraintType = IKBone.RotationConstraintType.BALL;
-            tipBone.ConstraintAxis = Vector3.forward;
-            tipBone.ConstraintRotationLimits = Vector3.one * maxRotation;
+            tipBone.realBone = head;
+            tipBone.parent = parent;
+            parent.child = tipBone;
+            tipBone.constraintType = IKBone.RotationConstraintType.BALL;
+            tipBone.constraintAxis = Vector3.forward;
+            tipBone.constraintRotationLimits = Vector3.one * maxRotation;
             _tipBone = tipBone;
         }
     }
