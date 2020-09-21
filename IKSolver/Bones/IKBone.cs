@@ -4,10 +4,6 @@ using UnityEngine;
 
 namespace jCaballol94.IKsolver
 {
-    public class AngleRangeAttribute : PropertyAttribute
-    {
-    }
-
     public class IKBone : MonoBehaviour
     {
         public enum RotationConstraintType
@@ -21,7 +17,7 @@ namespace jCaballol94.IKsolver
         public IKBone Child { get; set; }
         public RotationConstraintType ConstraintType { get; set; }
         public Vector3 ConstraintAxis { get; set; }
-        public float ConstraintLimits { get; set; }
+        public Vector2 ConstraintRotationLimits { get; set; }
 
         private Quaternion _realBoneRotation;
 
@@ -88,6 +84,9 @@ namespace jCaballol94.IKsolver
                 case RotationConstraintType.HINGE:
                     var axis = transform.parent.rotation * ConstraintAxis;
                     var hingeAngle = AngleInPlane(transform.forward, forward, axis);
+
+                    hingeAngle = ConstrainAngle(hingeAngle, ConstraintRotationLimits);
+
                     var hingeRotation = Quaternion.AngleAxis(hingeAngle, axis);
 
                     forward = hingeRotation * transform.forward;
@@ -107,6 +106,27 @@ namespace jCaballol94.IKsolver
             var correction = Vector3.Dot(axis, vector);
             var projected = vector - axis * correction;
             return projected.normalized;
+        }
+
+        public static float ConstrainAngle (float angle, Vector2 limits)
+        {
+            var center = (limits.x + limits.y) * 0.5f;
+            angle = CenterAngle(angle, center);
+            return Mathf.Clamp(angle, limits.x, limits.y);
+        }
+
+        public static float CenterAngle (float angle, float center)
+        {
+            while (angle > center + 180f)
+            {
+                angle -= 360f;
+            }
+            while (angle < center - 180f)
+            {
+                angle += 360f;
+            }
+
+            return angle;
         }
     }
 }

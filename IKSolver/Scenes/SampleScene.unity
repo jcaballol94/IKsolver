@@ -1336,8 +1336,10 @@ MonoBehaviour:
   shoulder: {fileID: 2080222135}
   elbow: {fileID: 465956379}
   elbowReference: {fileID: 324618611}
+  elbowLimits: {x: 0, y: 150}
   wrist: {fileID: 2134513126}
   wristReference: {fileID: 1774064901}
+  wristLimits: {x: -60, y: 60}
 --- !u!4 &1290568093
 Transform:
   m_ObjectHideFlags: 0

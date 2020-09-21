@@ -12,10 +12,12 @@ namespace jCaballol94.IKsolver
         [Header("Elbow")]
         public Transform elbow;
         public Transform elbowReference;
+        public Vector2 elbowLimits = new Vector2(0f, 150f);
 
         [Header("Wrist")]
         public Transform wrist;
         public Transform wristReference;
+        public Vector2 wristLimits = new Vector2(-60f, 60f);
 
         private void Awake()
         {
@@ -37,12 +39,14 @@ namespace jCaballol94.IKsolver
 
             var elbowBone = elbowGO.AddComponent<IKBone>();
             elbowBone.RealBone = elbow;
-            elbowBone.ConstraintType = IKBone.RotationConstraintType.HINGE;
-            var elbowReferenceVector = _rootBone.transform.InverseTransformPoint(elbowReference.position) - elbowBone.transform.localPosition;
-            elbowBone.ConstraintAxis = Vector3.Cross(elbowReferenceVector, Vector3.forward).normalized;
             elbowBone.Parent = _rootBone;
             _rootBone.Child = elbowBone;
 
+            elbowBone.ConstraintType = IKBone.RotationConstraintType.HINGE;
+            var elbowReferenceVector = _rootBone.transform.InverseTransformPoint(elbowReference.position) - elbowBone.transform.localPosition;
+            elbowBone.ConstraintAxis = Vector3.Cross(elbowReferenceVector, Vector3.forward).normalized;
+            elbowBone.ConstraintRotationLimits = elbowLimits;
+            
             var wristGo = new GameObject("WristIK");
 
             wristGo.transform.parent = elbowGO.transform;
@@ -51,11 +55,13 @@ namespace jCaballol94.IKsolver
 
             _tipBone = wristGo.AddComponent<IKBone>();
             _tipBone.RealBone = wrist;
+            _tipBone.Parent = elbowBone;
+            elbowBone.Child = _tipBone;
+
             _tipBone.ConstraintType = IKBone.RotationConstraintType.HINGE;
             var wristReferenceVector = elbowBone.transform.InverseTransformPoint(wristReference.position) - _tipBone.transform.localPosition;
             _tipBone.ConstraintAxis = Vector3.Cross(wristReferenceVector, Vector3.forward).normalized;
-            _tipBone.Parent = elbowBone;
-            elbowBone.Child = _tipBone;
+            _tipBone.ConstraintRotationLimits = wristLimits;
         }
     }
 }
