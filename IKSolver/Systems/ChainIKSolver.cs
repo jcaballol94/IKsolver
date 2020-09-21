@@ -28,6 +28,7 @@ namespace jCaballol94.IKsolver
                 var bone = go.AddComponent<IKBone>();
                 bone.RealBone = tail;
                 bone.Parent = parent;
+                bone.ConstraintType = IKBone.RotationConstraintType.NONE;
                 if (parent)
                 {
                     parent.Child = bone;
@@ -49,6 +50,7 @@ namespace jCaballol94.IKsolver
             tipBone.RealBone = head;
             tipBone.Parent = parent;
             parent.Child = tipBone;
+            tipBone.ConstraintType = IKBone.RotationConstraintType.NONE;
             _tipBone = tipBone;
         }
     }

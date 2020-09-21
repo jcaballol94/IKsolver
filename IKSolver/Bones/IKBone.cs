@@ -4,11 +4,24 @@ using UnityEngine;
 
 namespace jCaballol94.IKsolver
 {
+    public class AngleRangeAttribute : PropertyAttribute
+    {
+    }
+
     public class IKBone : MonoBehaviour
     {
+        public enum RotationConstraintType
+        {
+            NONE,
+            HINGE
+        }
+
         public Transform RealBone { get; set; }
         public IKBone Parent { get; set; }
         public IKBone Child { get; set; }
+        public RotationConstraintType ConstraintType { get; set; }
+        public Vector3 ConstraintAxis { get; set; }
+        public float ConstraintLimits { get; set; }
 
         private Quaternion _realBoneRotation;
 
@@ -36,8 +49,10 @@ namespace jCaballol94.IKsolver
                 var desiredRotation = Quaternion.FromToRotation(toTip, toTarget);
 
                 var desiredForward = desiredRotation * transform.forward;
-                var desiredUp= desiredRotation * transform.up;
+                var desiredUp = desiredRotation * transform.up;
                 var desiredRight = desiredRotation * transform.right;
+
+                ApplyRotationConstraint(ref desiredForward);
 
                 transform.rotation = Quaternion.LookRotation(desiredForward, desiredUp);
             }
@@ -56,12 +71,42 @@ namespace jCaballol94.IKsolver
             var desiredUp = desiredRotation * transform.up;
             var desiredRight = desiredRotation * transform.right;
 
+            ApplyRotationConstraint(ref desiredForward);
+
             transform.rotation = Quaternion.LookRotation(desiredForward, desiredUp);
 
             if (Parent)
             {
                 Parent.IterateTargetRotation(tip, target);
             }
+        }
+
+        private void ApplyRotationConstraint(ref Vector3 forward)
+        {
+            switch (ConstraintType)
+            {
+                case RotationConstraintType.HINGE:
+                    var axis = transform.parent.rotation * ConstraintAxis;
+                    var hingeAngle = AngleInPlane(transform.forward, forward, axis);
+                    var hingeRotation = Quaternion.AngleAxis(hingeAngle, axis);
+
+                    forward = hingeRotation * transform.forward;
+                    break;
+            }
+        }
+
+        public static float AngleInPlane(Vector3 from, Vector3 to, Vector3 axis)
+        {
+            var projectedFrom = ProjectVector(from, axis);
+            var projectedTo = ProjectVector(to, axis);
+            return Vector3.SignedAngle(projectedFrom, projectedTo, axis);
+        }
+
+        public static Vector3 ProjectVector(Vector3 vector, Vector3 axis)
+        {
+            var correction = Vector3.Dot(axis, vector);
+            var projected = vector - axis * correction;
+            return projected.normalized;
         }
     }
 }

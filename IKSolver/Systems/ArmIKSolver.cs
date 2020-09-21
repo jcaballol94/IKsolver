@@ -27,6 +27,7 @@ namespace jCaballol94.IKsolver
 
             _rootBone = shoulderGo.AddComponent<IKBone>();
             _rootBone.RealBone = shoulder;
+            _rootBone.ConstraintType = IKBone.RotationConstraintType.NONE;
 
             var elbowGO = new GameObject("ElbowIK");
 
@@ -36,6 +37,9 @@ namespace jCaballol94.IKsolver
 
             var elbowBone = elbowGO.AddComponent<IKBone>();
             elbowBone.RealBone = elbow;
+            elbowBone.ConstraintType = IKBone.RotationConstraintType.HINGE;
+            var elbowReferenceVector = _rootBone.transform.InverseTransformPoint(elbowReference.position) - elbowBone.transform.localPosition;
+            elbowBone.ConstraintAxis = Vector3.Cross(elbowReferenceVector, Vector3.forward).normalized;
             elbowBone.Parent = _rootBone;
             _rootBone.Child = elbowBone;
 
@@ -46,7 +50,10 @@ namespace jCaballol94.IKsolver
             wristGo.transform.rotation = Quaternion.LookRotation(wrist.position - elbow.position, elbowGO.transform.up);
 
             _tipBone = wristGo.AddComponent<IKBone>();
-            _tipBone.RealBone = elbow;
+            _tipBone.RealBone = wrist;
+            _tipBone.ConstraintType = IKBone.RotationConstraintType.HINGE;
+            var wristReferenceVector = elbowBone.transform.InverseTransformPoint(wristReference.position) - _tipBone.transform.localPosition;
+            _tipBone.ConstraintAxis = Vector3.Cross(wristReferenceVector, Vector3.forward).normalized;
             _tipBone.Parent = elbowBone;
             elbowBone.Child = _tipBone;
         }

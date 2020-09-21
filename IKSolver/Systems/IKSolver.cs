@@ -34,16 +34,15 @@ namespace jCaballol94.IKsolver
 
         public void DoIteration()
         {
-            if (runNormally || solveOnce || runFullIteration || runPositionIteration)
-            {
-                _tipBone.IterateTargetPosition(_tipBone.transform, target);
-                runPositionIteration = false;
-            }
-
             if (runNormally || solveOnce || runFullIteration || runRotationIteration)
             {
                 _tipBone.IterateTargetRotation(_tipBone.transform, target);
                 runRotationIteration = false;
+            }
+            if (runNormally || solveOnce || runFullIteration || runPositionIteration)
+            {
+                _tipBone.IterateTargetPosition(_tipBone.transform, target);
+                runPositionIteration = false;
             }
 
             _rootBone.ApplyPose();
