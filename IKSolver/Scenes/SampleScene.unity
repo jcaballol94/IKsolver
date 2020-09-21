@@ -2198,7 +2198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runAutomatically: 1
-  runNormally: 0
+  runNormally: 1
   solveOnce: 0
   runFullIteration: 0
   runPositionIteration: 0
@@ -2208,6 +2208,8 @@ MonoBehaviour:
   root: {fileID: 1066109705}
   tip: {fileID: 628843145}
   maxRotation: 45
+  useRollConstraint: 1
+  RollRange: {x: -30, y: 30}
 --- !u!4 &1546359712
 Transform:
   m_ObjectHideFlags: 0
@@ -2458,6 +2460,8 @@ MonoBehaviour:
   numIterations: 10
   root: {fileID: 1404342977}
   tip: {fileID: 76838235}
+  useRollConstraint: 1
+  RollRange: {x: 0, y: 0}
 --- !u!4 &1720901275
 Transform:
   m_ObjectHideFlags: 0

@@ -9,6 +9,10 @@ namespace jCaballol94.IKsolver
         public Transform root;
         public Transform tip;
 
+        [Header("Constraint")]
+        public bool useRollConstraint = false;
+        public Vector2 RollRange = Vector2.zero;
+
         private void Awake()
         {
             IKBone parent = null;
@@ -26,6 +30,8 @@ namespace jCaballol94.IKsolver
                 go.transform.rotation = Quaternion.LookRotation(head.position - tail.position, parent ? parent.transform.up : transform.up);
 
                 var bone = go.AddComponent<IKBone>();
+                bone.useRollConstraint = useRollConstraint;
+                bone.constraintRollLimits = RollRange;
                 bone.realBone = tail;
                 bone.parent = parent;
                 if (parent)
@@ -46,6 +52,8 @@ namespace jCaballol94.IKsolver
             tipGo.transform.rotation = parent.transform.rotation;
 
             var tipBone = tipGo.AddComponent<IKBone>();
+            tipBone.useRollConstraint = useRollConstraint;
+            tipBone.constraintRollLimits = RollRange;
             tipBone.realBone = head;
             tipBone.parent = parent;
             parent.child = tipBone;

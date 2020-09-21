@@ -9,6 +9,8 @@ namespace jCaballol94.IKsolver
         public Transform root;
         public Transform tip;
         public float maxRotation = 45f;
+        public bool useRollConstraint = false;
+        public Vector2 RollRange = Vector2.zero;
 
         private void Awake()
         {
@@ -32,6 +34,9 @@ namespace jCaballol94.IKsolver
                 bone.constraintType = IKBone.RotationConstraintType.BALL;
                 bone.constraintAxis = Vector3.forward;
                 bone.constraintRotationLimits = Vector3.one * maxRotation;
+                bone.useRollConstraint = useRollConstraint;
+                bone.constraintRollLimits = RollRange;
+
                 if (parent)
                 {
                     parent.child = bone;
@@ -56,6 +61,8 @@ namespace jCaballol94.IKsolver
             tipBone.constraintType = IKBone.RotationConstraintType.BALL;
             tipBone.constraintAxis = Vector3.forward;
             tipBone.constraintRotationLimits = Vector3.one * maxRotation;
+            tipBone.useRollConstraint = useRollConstraint;
+            tipBone.constraintRollLimits = RollRange;
             _tipBone = tipBone;
         }
     }
