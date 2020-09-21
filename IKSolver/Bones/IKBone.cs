@@ -83,13 +83,12 @@ namespace jCaballol94.IKsolver
             {
                 case RotationConstraintType.HINGE:
                     var axis = transform.parent.rotation * ConstraintAxis;
-                    var hingeAngle = AngleInPlane(transform.forward, forward, axis);
+                    var hingeAngle = AngleInPlane(transform.parent.forward, forward, axis);
 
                     hingeAngle = ConstrainAngle(hingeAngle, ConstraintRotationLimits);
 
                     var hingeRotation = Quaternion.AngleAxis(hingeAngle, axis);
-
-                    forward = hingeRotation * transform.forward;
+                    forward = hingeRotation * transform.parent.forward;
                     break;
             }
         }
