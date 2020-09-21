@@ -53,8 +53,16 @@ namespace jCaballol94.IKsolver
                 var desiredUp = desiredRotation * transform.up;
                 var desiredRight = desiredRotation * transform.right;
 
+                Debug.DrawLine(transform.position, transform.position + desiredForward, Color.green, 2f);
+                Debug.DrawLine(transform.position, transform.position + desiredUp, Color.green, 2f);
+                Debug.DrawLine(transform.position, transform.position + desiredRight, Color.green, 2f);
+
                 ApplyRotationConstraint(ref desiredForward);
                 ApplyRollConstraint(desiredForward, desiredRight, ref desiredUp);
+
+                Debug.DrawLine(transform.position, transform.position + desiredForward, Color.red, 2f);
+                Debug.DrawLine(transform.position, transform.position + desiredUp, Color.red, 2f);
+                Debug.DrawLine(transform.position, transform.position + desiredRight, Color.red, 2f);
 
                 transform.rotation = Quaternion.LookRotation(desiredForward, desiredUp);
             }

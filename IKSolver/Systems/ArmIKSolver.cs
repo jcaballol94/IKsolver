@@ -10,11 +10,13 @@ namespace jCaballol94.IKsolver
         public Transform shoulder;
         public Transform shoulderReference;
         public float shoulderLimit = 90f;
+        public Vector2 shoulderRollLimit = new Vector2(-110f, 110f);
 
         [Header("Elbow")]
         public Transform elbow;
         public Transform elbowReference;
         public Vector2 elbowLimits = new Vector2(0f, 150f);
+        public Vector2 armRollLimit = new Vector2(0f, 150f);
 
         [Header("Wrist")]
         public Transform wrist;
@@ -35,6 +37,8 @@ namespace jCaballol94.IKsolver
             _rootBone.constraintType = IKBone.RotationConstraintType.BALL;
             _rootBone.constraintAxis = shoulderReference.localPosition - _rootBone.transform.localPosition;
             _rootBone.constraintRotationLimits = Vector2.one * shoulderLimit;
+            _rootBone.useRollConstraint = true;
+            _rootBone.constraintRollLimits = shoulderRollLimit;
 
             var elbowGO = new GameObject("ElbowIK");
 
@@ -51,7 +55,9 @@ namespace jCaballol94.IKsolver
             var elbowReferenceVector = _rootBone.transform.InverseTransformPoint(elbowReference.position) - elbowBone.transform.localPosition;
             elbowBone.constraintAxis = Vector3.Cross(elbowReferenceVector, Vector3.forward).normalized;
             elbowBone.constraintRotationLimits = elbowLimits;
-            
+            elbowBone.useRollConstraint = true;
+            elbowBone.constraintRollLimits = armRollLimit;
+
             var wristGo = new GameObject("WristIK");
 
             wristGo.transform.parent = elbowGO.transform;
@@ -67,6 +73,8 @@ namespace jCaballol94.IKsolver
             var wristReferenceVector = elbowBone.transform.InverseTransformPoint(wristReference.position) - _tipBone.transform.localPosition;
             _tipBone.constraintAxis = Vector3.Cross(wristReferenceVector, Vector3.forward).normalized;
             _tipBone.constraintRotationLimits = wristLimits;
+            _tipBone.useRollConstraint = true;
+            _tipBone.constraintRollLimits = Vector2.zero;
         }
     }
 }
