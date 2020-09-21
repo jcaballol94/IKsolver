@@ -10,6 +10,7 @@ namespace jCaballol94.IKsolver
         public bool runNormally;
         public bool solveOnce;
         public bool runFullIteration;
+        public bool runPositionIteration;
 
         public Transform target;
         public int numIterations = 10;
@@ -32,10 +33,13 @@ namespace jCaballol94.IKsolver
 
         public void DoIteration()
         {
-            if (runNormally || solveOnce || runFullIteration)
+            if (runNormally || solveOnce || runFullIteration || runPositionIteration)
             {
-                _rootBone.ApplyPose();
+                _tipBone.IterateTargetPosition(_tipBone.transform, target);
+                runPositionIteration = false;
             }
+
+            _rootBone.ApplyPose();
             runFullIteration = false;
         }
 
@@ -43,10 +47,7 @@ namespace jCaballol94.IKsolver
         {
             for (int i = 0; i < numIterations; ++i)
             {
-                if (runNormally || solveOnce || runFullIteration)
-                {
-                    DoIteration();
-                }
+                DoIteration();
 
                 if (!runNormally && !solveOnce)
                 {
