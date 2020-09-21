@@ -47,5 +47,21 @@ namespace jCaballol94.IKsolver
                 Parent.IterateTargetPosition(tip, target);
             }
         }
+
+        public void IterateTargetRotation (Transform tip, Transform target)
+        {
+            var desiredRotation = target.rotation * Quaternion.Inverse(tip.rotation);
+
+            var desiredForward = desiredRotation * transform.forward;
+            var desiredUp = desiredRotation * transform.up;
+            var desiredRight = desiredRotation * transform.right;
+
+            transform.rotation = Quaternion.LookRotation(desiredForward, desiredUp);
+
+            if (Parent)
+            {
+                Parent.IterateTargetRotation(tip, target);
+            }
+        }
     }
 }

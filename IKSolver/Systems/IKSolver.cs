@@ -11,6 +11,7 @@ namespace jCaballol94.IKsolver
         public bool solveOnce;
         public bool runFullIteration;
         public bool runPositionIteration;
+        public bool runRotationIteration;
 
         public Transform target;
         public int numIterations = 10;
@@ -37,6 +38,12 @@ namespace jCaballol94.IKsolver
             {
                 _tipBone.IterateTargetPosition(_tipBone.transform, target);
                 runPositionIteration = false;
+            }
+
+            if (runNormally || solveOnce || runFullIteration || runRotationIteration)
+            {
+                _tipBone.IterateTargetRotation(_tipBone.transform, target);
+                runRotationIteration = false;
             }
 
             _rootBone.ApplyPose();
