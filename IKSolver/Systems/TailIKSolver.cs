@@ -8,6 +8,7 @@ namespace jCaballol94.IKsolver
     {
         public Transform root;
         public Transform tip;
+        public float maxRotation = 45f;
 
         private void Awake()
         {
@@ -28,7 +29,9 @@ namespace jCaballol94.IKsolver
                 var bone = go.AddComponent<IKBone>();
                 bone.RealBone = tail;
                 bone.Parent = parent;
-                bone.ConstraintType = IKBone.RotationConstraintType.NONE;
+                bone.ConstraintType = IKBone.RotationConstraintType.BALL;
+                bone.ConstraintAxis = Vector3.forward;
+                bone.ConstraintRotationLimits = Vector3.one * maxRotation;
                 if (parent)
                 {
                     parent.Child = bone;
@@ -50,7 +53,9 @@ namespace jCaballol94.IKsolver
             tipBone.RealBone = head;
             tipBone.Parent = parent;
             parent.Child = tipBone;
-            tipBone.ConstraintType = IKBone.RotationConstraintType.NONE;
+            tipBone.ConstraintType = IKBone.RotationConstraintType.BALL;
+            tipBone.ConstraintAxis = Vector3.forward;
+            tipBone.ConstraintRotationLimits = Vector3.one * maxRotation;
             _tipBone = tipBone;
         }
     }

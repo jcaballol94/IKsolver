@@ -9,7 +9,8 @@ namespace jCaballol94.IKsolver
         public enum RotationConstraintType
         {
             NONE,
-            HINGE
+            HINGE,
+            BALL
         }
 
         public Transform RealBone { get; set; }
@@ -82,13 +83,25 @@ namespace jCaballol94.IKsolver
             switch (ConstraintType)
             {
                 case RotationConstraintType.HINGE:
-                    var axis = transform.parent.rotation * ConstraintAxis;
-                    var hingeAngle = AngleInPlane(transform.parent.forward, forward, axis);
+                    {
+                        var axis = transform.parent.rotation * ConstraintAxis;
+                        var hingeAngle = AngleInPlane(transform.parent.forward, forward, axis);
 
-                    hingeAngle = ConstrainAngle(hingeAngle, ConstraintRotationLimits);
+                        hingeAngle = ConstrainAngle(hingeAngle, ConstraintRotationLimits);
 
-                    var hingeRotation = Quaternion.AngleAxis(hingeAngle, axis);
-                    forward = hingeRotation * transform.parent.forward;
+                        var hingeRotation = Quaternion.AngleAxis(hingeAngle, axis);
+                        forward = hingeRotation * transform.parent.forward;
+                    }
+                    break;
+
+                case RotationConstraintType.BALL:
+                    {
+                        var axis = transform.parent.rotation * ConstraintAxis;
+
+                        var desiredRotation = Quaternion.FromToRotation(axis, forward);
+                        var constrainedRotation = Quaternion.RotateTowards(Quaternion.identity, desiredRotation, ConstraintRotationLimits.x);
+                        forward = constrainedRotation * axis;
+                    }
                     break;
             }
         }
