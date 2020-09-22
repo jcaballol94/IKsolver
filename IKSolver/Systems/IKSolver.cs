@@ -15,16 +15,17 @@ namespace jCaballol94.IKsolver
         public bool pullRoots;
 
         public int numIterations = 10;
+        [Range(0f, 1f)] public float _pinRoot = 1f;
 
         private FabrikBone _rootBone;
         private Vector3 _rootPosition;
-        private Quaternion _rootRotation;
 
         private void Start()
         {
             var rootDefinition = GetComponentInChildren<FabrikBoneDefinition>();
             _rootBone = rootDefinition.CreateBones(transform);
             _rootBone.Initialize();
+            _rootPosition = _rootBone.transform.localPosition;
         }
 
         public void DoIteration()
@@ -36,8 +37,7 @@ namespace jCaballol94.IKsolver
             }
             if (runNormally || solveOnce || runFullIteration || pullRoots)
             {
-                _rootBone.transform.localPosition = _rootPosition;
-                _rootBone.transform.localRotation = _rootRotation;
+                _rootBone.transform.localPosition = Vector3.Lerp(_rootBone.transform.localPosition, _rootPosition, _pinRoot);
                 _rootBone.PullRoot(transform.forward, transform.up, transform.right);
                 pullRoots = false;
             }
