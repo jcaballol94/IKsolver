@@ -4,48 +4,45 @@ using UnityEngine;
 
 namespace jCaballol94.IKsolver
 {
-    public abstract class IKSolver : MonoBehaviour
+    [AddComponentMenu("IKSolver/Solver")]
+    public class IKSolver : MonoBehaviour
     {
         public bool runAutomatically = true;
-        public bool runNormally;
+        public bool runNormally = true;
         public bool solveOnce;
         public bool runFullIteration;
-        public bool runPositionIteration;
-        public bool runRotationIteration;
+        public bool pullEnds;
+        public bool pullRoots;
 
-        public Transform target;
         public int numIterations = 10;
 
-        protected IKBone _rootBone;
-        protected IKBone _tipBone;
+        private FabrikBone _rootBone;
+        private Vector3 _rootPosition;
+        private Quaternion _rootRotation;
 
-        public static Transform GetChildThatLeadsToTip (Transform root, Transform tip)
+        private void Start()
         {
-            for (int i = 0; i < root.childCount; ++i)
-            {
-                var child = root.GetChild(i);
-                if (tip.IsChildOf(child))
-                {
-                    return child;
-                }
-            }
-            return null;
+            var rootDefinition = GetComponentInChildren<FabrikBoneDefinition>();
+            _rootBone = rootDefinition.CreateBones(transform);
+            _rootBone.Initialize();
         }
 
         public void DoIteration()
         {
-            if (runNormally || solveOnce || runFullIteration || runRotationIteration)
+            if (runNormally || solveOnce || runFullIteration || pullEnds)
             {
-                _tipBone.IterateTargetRotation(_tipBone.transform, target);
-                runRotationIteration = false;
+                _rootBone.PullEnds(transform.position, _rootBone.transform.localPosition, transform.forward, transform.up, transform.up);
+                pullEnds = false;
             }
-            if (runNormally || solveOnce || runFullIteration || runPositionIteration)
+            if (runNormally || solveOnce || runFullIteration || pullRoots)
             {
-                _tipBone.IterateTargetPosition(_tipBone.transform, target);
-                runPositionIteration = false;
+                _rootBone.transform.localPosition = _rootPosition;
+                _rootBone.transform.localRotation = _rootRotation;
+                _rootBone.PullRoot(transform.forward, transform.up, transform.right);
+                pullRoots = false;
             }
 
-            _rootBone.ApplyPose();
+            _rootBone.ApplyTransform();
             runFullIteration = false;
         }
 
