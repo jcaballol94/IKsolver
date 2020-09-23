@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace jCaballol94.IKsolver
 {
@@ -18,16 +19,31 @@ namespace jCaballol94.IKsolver
         private float _length;
         private Quaternion _realBoneRotation;
 
+        public readonly UnityEvent onPoseInitialized = new UnityEvent();
+        public readonly UnityEvent onPullEnds = new UnityEvent();
+        public readonly UnityEvent onEndsPulled = new UnityEvent();
+        public readonly UnityEvent onPullRoot = new UnityEvent();
+        public readonly UnityEvent onRootPulled = new UnityEvent();
+
         public void ExploreHierarchy ()
         {
-            for (int i = 0; i < transform.childCount; ++i)
+            ExploreHierarchy(transform);
+        }
+
+        private void ExploreHierarchy (Transform trans)
+        {
+            for (int i = 0; i < trans.childCount; ++i)
             {
-                var childBone = transform.GetChild(i).GetComponentInChildren<Bone>();
+                var childBone = trans.GetChild(i).GetComponent<Bone>();
                 if (childBone)
                 {
                     childBone.ExploreHierarchy();
                     childBone.Parent = this;
                     children.Add(childBone);
+                }
+                else
+                {
+                    ExploreHierarchy(trans.GetChild(i));
                 }
             }
         }
@@ -48,24 +64,28 @@ namespace jCaballol94.IKsolver
             var target = GetTargetPoint();
             Rotation = Quaternion.LookRotation(target - Position);
 
+            onPoseInitialized.Invoke();
+
             _realBoneRotation = Quaternion.Inverse(Rotation) * transform.rotation;
         }
 
-        public Vector3 PullEnds()
+        public void PullEnds()
         {
-            if (target)
+            // First update the children
+            for (int i = 0; i < children.Count; ++i)
             {
-                // If I have a target, go there
-                Position = target.position;
-                Rotation = target.rotation;
+                children[i].PullEnds();
             }
-            else if (children.Count > 0)
+
+            onPullEnds.Invoke();
+
+            if (children.Count > 0)
             {
                 // If I have children, let them pull me
                 var newPosition = Vector3.zero;
                 for (int i = 0; i < children.Count; ++i)
                 {
-                    newPosition += children[i].PullEnds();
+                    newPosition += children[i].GetDesiredParentPosition();
                 }
                 Position = newPosition / children.Count;
 
@@ -73,6 +93,18 @@ namespace jCaballol94.IKsolver
                 Rotation = Quaternion.LookRotation(target - Position);
             }
 
+            if (target)
+            {
+                // If I have a target, go there
+                Position = target.position;
+                Rotation = target.rotation;
+            }
+
+            onEndsPulled.Invoke();
+        }
+
+        public Vector3 GetDesiredParentPosition ()
+        {
             if (Parent)
             {
                 // Calculate the position I want my parent to be at
@@ -86,13 +118,20 @@ namespace jCaballol94.IKsolver
 
         public void PullRoot()
         {
+            onPullRoot.Invoke();
+
             for (int i = 0; i < children.Count; ++i)
             {
                 // Pull all the children towards me
                 var toChild = children[i].Position - Position;
                 toChild.Normalize();
                 children[i].Position = Position + toChild * children[i]._length;
+            }
 
+            onRootPulled.Invoke();
+
+            for (int i = 0; i < children.Count; ++i)
+            {
                 // Allow them to pull their own children
                 children[i].PullRoot();
             }
@@ -111,7 +150,7 @@ namespace jCaballol94.IKsolver
             }
         }
 
-        private Vector3 GetTargetPoint()
+        public Vector3 GetTargetPoint()
         {
             var target = Vector3.zero;
             for (int i = 0; i < children.Count; ++i)
@@ -130,6 +169,9 @@ namespace jCaballol94.IKsolver
         {
             Gizmos.color = Color.white;
             Gizmos.DrawWireSphere(Position, 0.01f);
+            Gizmos.DrawLine(Position, Position + Rotation * Vector3.up * 0.1f);
+            Gizmos.DrawLine(Position, Position + Rotation * Vector3.right * 0.1f);
+
             if (Parent)
             {
                 Gizmos.DrawLine(Position, Parent.Position);
