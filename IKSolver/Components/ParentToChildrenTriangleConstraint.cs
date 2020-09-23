@@ -76,6 +76,15 @@ namespace jCaballol94.IKsolver
             {
                 Gizmos.color = Color.red;
                 Gizmos.DrawLine(_boneA.Position, _boneB.Position);
+                Gizmos.DrawLine(_parent.Position, _boneB.Position);
+                Gizmos.DrawLine(_boneA.Position, _parent.Position);
+            }
+            else
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawLine(_boneA.transform.position, _boneB.transform.position);
+                Gizmos.DrawLine(_parent.transform.position, _boneB.transform.position);
+                Gizmos.DrawLine(_boneA.transform.position, _parent.transform.position);
             }
         }
     }

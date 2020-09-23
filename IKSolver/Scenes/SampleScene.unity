@@ -3610,7 +3610,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &8458074588972720610
 GameObject:
   m_ObjectHideFlags: 0
@@ -3750,6 +3750,7 @@ GameObject:
   - component: {fileID: 8770693620703232463}
   - component: {fileID: 8770693620703232465}
   - component: {fileID: 8770693620703232464}
+  - component: {fileID: 8770693620703232466}
   m_Layer: 0
   m_Name: SM_Jamal
   m_TagString: Untagged
@@ -3804,6 +3805,21 @@ MonoBehaviour:
   _boneA: {fileID: 4198941228040034105}
   _boneB: {fileID: 2899247782407305739}
   _parent: {fileID: 9099951591068664666}
+--- !u!114 &8770693620703232466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8770693620703232462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55dd636b6d9ea58458bb414197c54025, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _baseA: {fileID: 2899247782407305739}
+  _baseB: {fileID: 4198941228040034105}
+  _tip: {fileID: 7510842592507032879}
 --- !u!4 &8772922080781808935
 Transform:
   m_ObjectHideFlags: 0

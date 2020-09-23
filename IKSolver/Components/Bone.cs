@@ -167,20 +167,33 @@ namespace jCaballol94.IKsolver
 
         private void OnDrawGizmos()
         {
-            Gizmos.color = Color.white;
-            Gizmos.DrawWireSphere(Position, 0.01f);
-            Gizmos.DrawLine(Position, Position + Rotation * Vector3.up * 0.1f);
-            Gizmos.DrawLine(Position, Position + Rotation * Vector3.right * 0.1f);
-
-            if (Parent)
+            if (Application.isPlaying)
             {
-                Gizmos.DrawLine(Position, Parent.Position);
+                Gizmos.color = Color.white;
+                Gizmos.DrawWireSphere(Position, 0.01f);
+                Gizmos.DrawLine(Position, Position + Rotation * Vector3.up * 0.1f);
+                Gizmos.DrawLine(Position, Position + Rotation * Vector3.right * 0.1f);
+
+                if (Parent)
+                {
+                    Gizmos.DrawLine(Position, Parent.Position);
+                }
+
+                if (target)
+                {
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawWireSphere(target.position, 0.05f);
+                }
             }
-
-            if (target)
+            else
             {
-                Gizmos.color = Color.green;
-                Gizmos.DrawWireSphere(target.position, 0.05f);
+                Gizmos.DrawWireSphere(transform.position, 0.01f);
+
+                if (target)
+                {
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawWireSphere(target.position, 0.05f);
+                }
             }
         }
     }
