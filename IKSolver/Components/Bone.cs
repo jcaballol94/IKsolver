@@ -125,5 +125,21 @@ namespace jCaballol94.IKsolver
             }
             return Position + Rotation * Vector3.forward;
         }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireSphere(Position, 0.01f);
+            if (Parent)
+            {
+                Gizmos.DrawLine(Position, Parent.Position);
+            }
+
+            if (target)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(target.position, 0.05f);
+            }
+        }
     }
 }
