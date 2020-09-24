@@ -56,7 +56,7 @@ namespace jCaballol94.IKsolver
 
             // Orient myself based on the position of the children
             var target = GetTargetPoint();
-            Rotation = Quaternion.LookRotation(target - Position);
+            Rotation = Quaternion.LookRotation(target - Position, Rotation * Vector3.forward);
 
             _realBoneRotation = Quaternion.Inverse(Rotation) * transform.rotation;
         }
@@ -80,7 +80,7 @@ namespace jCaballol94.IKsolver
                 Position = newPosition / children.Count;
 
                 var target = GetTargetPoint();
-                Rotation = Quaternion.LookRotation(target - Position);
+                Rotation = Quaternion.LookRotation(target - Position, Rotation * Vector3.up);
             }
 
             if (target)
@@ -112,6 +112,8 @@ namespace jCaballol94.IKsolver
                 var toChild = children[i].Position - Position;
                 toChild.Normalize();
                 children[i].Position = Position + toChild * children[i]._length;
+                var childTarget = children[i].GetTargetPoint();
+                children[i].Rotation = Quaternion.LookRotation(childTarget - children[i].Position, children[i].Rotation * Vector3.up);
             }
 
             for (int i = 0; i < children.Count; ++i)
