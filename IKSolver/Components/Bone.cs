@@ -21,34 +21,29 @@ namespace jCaballol94.IKsolver
 
         public readonly UnityEvent onPostInitialize = new UnityEvent();
         public readonly UnityEvent onPrePullEnds = new UnityEvent();
+        public readonly UnityEvent onPostPullEnds = new UnityEvent();
         public readonly UnityEvent onPrePullRoot = new UnityEvent();
 
-        public void ExploreHierarchy ()
+        public void ExploreHierarchy (List<Constraint> constraints)
         {
-            ExploreHierarchy(transform);
-
-            // Inject the constraints' callbacks
-            var constraints = GetComponents<Constraint>();
-            for (int i = 0; i < constraints.Length; ++i)
-            {
-                constraints[i].RegisterMessages();
-            }
+            ExploreHierarchy(transform, constraints);
+            constraints.AddRange(GetComponents<Constraint>());
         }
 
-        private void ExploreHierarchy (Transform trans)
+        private void ExploreHierarchy (Transform trans, List<Constraint> constraints)
         {
             for (int i = 0; i < trans.childCount; ++i)
             {
                 var childBone = trans.GetChild(i).GetComponent<Bone>();
                 if (childBone)
                 {
-                    childBone.ExploreHierarchy();
+                    childBone.ExploreHierarchy(constraints);
                     childBone.Parent = this;
                     children.Add(childBone);
                 }
                 else
                 {
-                    ExploreHierarchy(trans.GetChild(i));
+                    ExploreHierarchy(trans.GetChild(i), constraints);
                 }
             }
         }
@@ -97,6 +92,8 @@ namespace jCaballol94.IKsolver
                 var target = GetTargetPoint();
                 Rotation = Quaternion.LookRotation(target - Position, Rotation * Vector3.up);
             }
+
+            onPostPullEnds.Invoke();
 
             if (target)
             {

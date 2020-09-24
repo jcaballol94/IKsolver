@@ -10,21 +10,14 @@ namespace jCaballol94.IKsolver
         [SerializeField] private Bone _boneA;
         [SerializeField] private Bone _boneB;
 
-        private Bone _tip;
-
         private float _halfBase;
         private float _tipToBase;
 
-        private void Awake()
-        {
-            _tip = GetComponent<Bone>();
-        }
-
         public override void RegisterMessages()
         {
-            _tip.onPostInitialize.AddListener(InitializeData);
-            _tip.onPrePullEnds.AddListener(PullFromBase);
-            _tip.onPrePullRoot.AddListener(PullFromTip);
+            _bone.onPostInitialize.AddListener(InitializeData);
+            _bone.onPrePullEnds.AddListener(PullFromBase);
+            _bone.onPrePullRoot.AddListener(PullFromTip);
 
             _boneA.onPostInitialize.AddListener(() => OrienteBone(_boneA));
             _boneB.onPostInitialize.AddListener(() => OrienteBone(_boneB));
@@ -51,10 +44,10 @@ namespace jCaballol94.IKsolver
         {
             _halfBase = Vector3.Distance(_boneA.Position, _boneB.Position) * 0.5f;
             var midPoint = (_boneA.Position + _boneB.Position) * 0.5f;
-            _tipToBase = Vector3.Distance(_tip.Position, midPoint);
+            _tipToBase = Vector3.Distance(_bone.Position, midPoint);
 
             var up = CalculateUpVector();
-            _tip.Rotation = Quaternion.LookRotation(midPoint - _tip.Position, up);
+            _bone.Rotation = Quaternion.LookRotation(midPoint - _bone.Position, up);
         }
 
         private void PullFromBase ()
@@ -65,24 +58,24 @@ namespace jCaballol94.IKsolver
             var toA = (_boneA.Position - midPoint).normalized;
             var toTip = Vector3.Cross(toA, up).normalized;
 
-            _tip.Position = midPoint + toTip * _tipToBase;
+            _bone.Position = midPoint + toTip * _tipToBase;
             _boneA.Position = midPoint + toA * _halfBase;
             _boneB.Position = midPoint - toA * _halfBase;
 
-            _tip.Rotation = Quaternion.LookRotation(midPoint - _tip.Position, up);
+            _bone.Rotation = Quaternion.LookRotation(midPoint - _bone.Position, up);
             UpdateBonesRotation(up);
         }
 
         public void PullFromTip ()
         {
-            var up = _tip.Rotation * Vector3.up;
+            var up = _bone.Rotation * Vector3.up;
             var midPoint = (_boneA.Position + _boneB.Position) * 0.5f;
 
-            var toMidPoint = (midPoint - _tip.Position).normalized;
-            midPoint = _tip.Position + toMidPoint * _tipToBase;
+            var toMidPoint = (midPoint - _bone.Position).normalized;
+            midPoint = _bone.Position + toMidPoint * _tipToBase;
 
-            _tip.Rotation = Quaternion.LookRotation(toMidPoint, up);
-            var toA = _tip.Rotation * Vector3.left;
+            _bone.Rotation = Quaternion.LookRotation(toMidPoint, up);
+            var toA = _bone.Rotation * Vector3.left;
 
             _boneA.Position = midPoint + toA * _halfBase;
             _boneB.Position = midPoint - toA * _halfBase;
@@ -91,8 +84,8 @@ namespace jCaballol94.IKsolver
 
         private Vector3 CalculateUpVector ()
         {
-            var toA = (_boneA.Position - _tip.Position).normalized;
-            var toB = (_boneB.Position - _tip.Position).normalized;
+            var toA = (_boneA.Position - _bone.Position).normalized;
+            var toB = (_boneB.Position - _bone.Position).normalized;
 
             var up = Vector3.Cross(toA, toB);
             return up.normalized;

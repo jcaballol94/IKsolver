@@ -25,7 +25,13 @@ namespace jCaballol94.IKsolver
             // Find the first bone of the hierarchy
             _root = GetComponentInChildren<Bone>();
             // Explore the rest of the hierarchy from there
-            _root.ExploreHierarchy();
+            var constraints = new List<Constraint>();
+            _root.ExploreHierarchy(constraints);
+            for (int i = 0; i < constraints.Count; ++i)
+            {
+                constraints[i].RegisterMessages();
+            }
+
             // Initialize all the bones
             _root.Initialize();
 
