@@ -19,9 +19,20 @@ namespace jCaballol94.IKsolver
         private float _length;
         private Quaternion _realBoneRotation;
 
+        public readonly UnityEvent onPostInitialize = new UnityEvent();
+        public readonly UnityEvent onPrePullEnds = new UnityEvent();
+        public readonly UnityEvent onPrePullRoot = new UnityEvent();
+
         public void ExploreHierarchy ()
         {
             ExploreHierarchy(transform);
+
+            // Inject the constraints' callbacks
+            var constraints = GetComponents<Constraint>();
+            for (int i = 0; i < constraints.Length; ++i)
+            {
+                constraints[i].RegisterMessages();
+            }
         }
 
         private void ExploreHierarchy (Transform trans)
@@ -58,6 +69,8 @@ namespace jCaballol94.IKsolver
             var target = GetTargetPoint();
             Rotation = Quaternion.LookRotation(target - Position, Rotation * Vector3.forward);
 
+            onPostInitialize.Invoke();
+
             _realBoneRotation = Quaternion.Inverse(Rotation) * transform.rotation;
         }
 
@@ -68,6 +81,8 @@ namespace jCaballol94.IKsolver
             {
                 children[i].PullEnds();
             }
+
+            onPrePullEnds.Invoke();
 
             if (children.Count > 0)
             {
@@ -106,6 +121,8 @@ namespace jCaballol94.IKsolver
 
         public void PullRoot()
         {
+            onPrePullRoot.Invoke();
+
             for (int i = 0; i < children.Count; ++i)
             {
                 // Pull all the children towards me

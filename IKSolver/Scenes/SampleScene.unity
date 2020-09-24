@@ -1172,6 +1172,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4678807520345966981}
+  - component: {fileID: 771562470601069616}
+  - component: {fileID: 771562470601069617}
   m_Layer: 0
   m_Name: spine_02
   m_TagString: Untagged
@@ -1179,6 +1181,33 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &771562470601069616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 771562470601069615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ce5c822601d0ab469729a0651ad3046, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+--- !u!114 &771562470601069617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 771562470601069615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 123b7cf6feb6f3246a69ac1ae029b503, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _boneA: {fileID: 5382591067915524876}
+  _boneB: {fileID: 6398311863035360826}
 --- !u!1 &772036362839588405
 GameObject:
   m_ObjectHideFlags: 0
@@ -1587,6 +1616,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 160973459956877663}
+  - component: {fileID: 2073759966330905177}
   m_Layer: 0
   m_Name: neck
   m_TagString: Untagged
@@ -1594,6 +1624,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &2073759966330905177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073759966330905176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ce5c822601d0ab469729a0651ad3046, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
 --- !u!4 &2153308333518015614
 Transform:
   m_ObjectHideFlags: 0
@@ -2245,6 +2288,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8260074410398116743}
   - component: {fileID: 3397884523719956258}
+  - component: {fileID: 3397884523719956259}
   m_Layer: 0
   m_Name: spine_01
   m_TagString: Untagged
@@ -2265,6 +2309,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
+--- !u!114 &3397884523719956259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3397884523719956257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 123b7cf6feb6f3246a69ac1ae029b503, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _boneA: {fileID: 2778352332620635431}
+  _boneB: {fileID: 5317458903437211674}
 --- !u!1 &3421168114698796389
 GameObject:
   m_ObjectHideFlags: 0
