@@ -52,6 +52,7 @@ namespace jCaballol94.IKsolver
                     _root.Rotation = Quaternion.Slerp(_root.Rotation, transform.rotation * _rootBaseRotation, _rootPull);
                     _root.PullRoot();
                     PullRoots = false;
+                    _root.transform.position = _root.Position;
                 }
 
                 RunOneIteration = false;
