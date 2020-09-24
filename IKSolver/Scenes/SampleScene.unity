@@ -1203,11 +1203,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 771562470601069615}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 123b7cf6feb6f3246a69ac1ae029b503, type: 3}
+  m_Script: {fileID: 11500000, guid: fcf8070dee77aad46a338e20961d8b3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _boneA: {fileID: 5382591067915524876}
   _boneB: {fileID: 6398311863035360826}
+  _boneC: {fileID: 2073759966330905177}
 --- !u!1 &772036362839588405
 GameObject:
   m_ObjectHideFlags: 0
@@ -1586,7 +1587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _numIterations: 10
-  _rootPull: 1
+  _rootPull: 0
   RunNormally: 1
   RunOneIteration: 0
   PullEnds: 0
