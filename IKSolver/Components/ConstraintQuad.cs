@@ -16,33 +16,42 @@ namespace jCaballol94.IKsolver
         private float _baseToC;
         private float _CenterToBase;
 
+        private Quaternion _tipBaseRotation;
+        private Quaternion _boneABaseRotation;
+        private Quaternion _boneBBaseRotation;
+        private Quaternion _boneCBaseRotation;
+
         public override void RegisterMessages()
         {
             _bone.onPostInitialize.AddListener(InitializeData);
             _bone.onPrePullEnds.AddListener(PullFromBase);
             _bone.onPrePullRoot.AddListener(PullFromTip);
-
-            _boneA.onPostInitialize.AddListener(() => OrienteBone(_boneA));
-            _boneB.onPostInitialize.AddListener(() => OrienteBone(_boneB));
-            _boneC.onPostInitialize.AddListener(() => OrienteBone(_boneC));
         }
 
-        private void OrienteBone (Bone bone)
+        private void UpdateBonesRotation(Vector3 up)
         {
-            bone.Rotation = Quaternion.LookRotation(bone.Rotation * Vector3.forward, CalculateUpVector());
+            UpdateBoneRotation(_boneA, up, _boneABaseRotation);
+            UpdateBoneRotation(_boneB, up, _boneBBaseRotation);
+            UpdateBoneRotation(_boneC, up, _boneCBaseRotation);
         }
 
-        private void UpdateBonesRotation (Vector3 up)
-        {
-            UpdateBoneRotation(_boneA, up);
-            UpdateBoneRotation(_boneB, up);
-            UpdateBoneRotation(_boneC, up);
-        }
-
-        private static void UpdateBoneRotation (Bone bone, Vector3 up)
+        private static void UpdateBoneRotation(Bone bone, Vector3 up, Quaternion boneBaseRotation)
         {
             var target = bone.GetTargetPoint();
-            bone.Rotation = Quaternion.LookRotation(target - bone.Position, up);
+            bone.Rotation = Quaternion.LookRotation(target - bone.Position, up) * boneBaseRotation;
+        }
+
+        private void CalculateBonesBaseRotation(Vector3 up)
+        {
+            _boneABaseRotation = CalculateBoneBaseRotation(_boneA, up);
+            _boneBBaseRotation = CalculateBoneBaseRotation(_boneB, up);
+            _boneCBaseRotation = CalculateBoneBaseRotation(_boneC, up);
+        }
+
+        private static Quaternion CalculateBoneBaseRotation(Bone bone, Vector3 up)
+        {
+            var target = bone.GetTargetPoint();
+            return Quaternion.Inverse(Quaternion.LookRotation(target - bone.Position, up)) * bone.Rotation;
         }
 
         private void InitializeData ()
@@ -58,7 +67,9 @@ namespace jCaballol94.IKsolver
             _CenterToBase = Vector3.Dot(toMidPoint, toCenter);
 
             var up = CalculateUpVector();
-            _bone.Rotation = Quaternion.LookRotation(midPoint - _bone.Position, up);
+            _tipBaseRotation = Quaternion.Inverse(Quaternion.LookRotation(midPoint - _bone.Position, up)) * _bone.Rotation;
+
+            CalculateBonesBaseRotation(up);
         }
 
         private void PullFromBase ()
@@ -76,7 +87,7 @@ namespace jCaballol94.IKsolver
             _boneB.Position = midPoint - toA * _halfBase;
             _boneC.Position = midPoint - toTip * _baseToC;
 
-            _bone.Rotation = Quaternion.LookRotation(midPoint - _bone.Position, up);
+            _bone.Rotation = Quaternion.LookRotation(midPoint - _bone.Position, up) * _tipBaseRotation;
             UpdateBonesRotation(up);
         }
 
@@ -95,6 +106,8 @@ namespace jCaballol94.IKsolver
             _boneB.Position = midPoint - toA * _halfBase;
             _boneC.Position = midPoint + toMidPoint * _baseToC;
             UpdateBonesRotation(up);
+
+            _bone.Rotation *= _tipBaseRotation;
         }
 
         private Vector3 CalculateUpVector ()

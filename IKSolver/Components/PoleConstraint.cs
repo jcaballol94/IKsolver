@@ -12,12 +12,14 @@ namespace jCaballol94.IKsolver
         private Bone _parent;
         private Bone _child;
 
+        private Quaternion _parentBaseRotation;
+
         public override void RegisterMessages()
         {
             _parent = _bone.Parent;
             _child = _bone.children[0];
 
-            _parent.onPostInitialize.AddListener(() => OrientBone(_parent));
+            _parent.onPostInitialize.AddListener(CalculateBaseRotation);
             _parent.onPostPullEnds.AddListener(ConstraintToPlane);
             _child.onPrePullRoot.AddListener(ConstraintToPlane);
         }
@@ -30,9 +32,9 @@ namespace jCaballol94.IKsolver
             return Vector3.Cross(toPole, toChild).normalized;
         }
 
-        private void OrientBone (Bone bone)
+        private void CalculateBaseRotation ()
         {
-            bone.Rotation = Quaternion.LookRotation(bone.Rotation * Vector3.forward, CalculateUp());
+            _parentBaseRotation = Quaternion.Inverse(Quaternion.LookRotation(_parent.Rotation * Vector3.forward, CalculateUp())) * _parent.Rotation;
         }
 
         private void ConstraintToPlane ()
@@ -47,7 +49,7 @@ namespace jCaballol94.IKsolver
 
             _bone.Position = _parent.Position + parentToBone;
 
-            _parent.Rotation = Quaternion.LookRotation(_bone.Position - _parent.Position, CalculateUp());
+            _parent.Rotation = Quaternion.LookRotation(_bone.Position - _parent.Position, CalculateUp()) * _parentBaseRotation;
             _bone.Rotation = Quaternion.LookRotation(_child.Position - _bone.Position, _bone.Rotation * Vector3.up);
         }
 

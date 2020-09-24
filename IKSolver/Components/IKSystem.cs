@@ -33,7 +33,7 @@ namespace jCaballol94.IKsolver
             }
 
             // Initialize all the bones
-            _root.Initialize();
+            _root.Initialize(transform.forward);
 
             _rootBasePosition = transform.InverseTransformPoint(_root.Position);
             _rootBaseRotation = Quaternion.Inverse(transform.rotation) * _root.Rotation;

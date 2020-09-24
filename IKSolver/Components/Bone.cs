@@ -48,7 +48,7 @@ namespace jCaballol94.IKsolver
             }
         }
 
-        public void Initialize()
+        public void Initialize(Vector3 preferredUp)
         {
             // Setup the position
             Position = transform.position;
@@ -56,13 +56,13 @@ namespace jCaballol94.IKsolver
             // Initialize the children first
             for (int i = 0; i < children.Count; ++i)
             {
-                children[i].Initialize();
+                children[i].Initialize(preferredUp);
                 children[i]._length = Vector3.Distance(children[i].Position, Position);
             }
 
             // Orient myself based on the position of the children
             var targetPoint = GetTargetPoint();
-            Rotation = Quaternion.LookRotation(targetPoint - Position, Rotation * Vector3.forward);
+            Rotation = Quaternion.LookRotation(targetPoint - Position, preferredUp);
 
             if (target)
             {
