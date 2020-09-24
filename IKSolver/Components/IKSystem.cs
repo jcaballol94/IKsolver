@@ -8,6 +8,7 @@ namespace jCaballol94.IKsolver
     public class IKSystem : MonoBehaviour
     {
         [SerializeField] private int _numIterations = 10;
+        [SerializeField] [Range(0f, 1f)] private float _rootPull = 1f;
 
         [Header("Debug")]
         public bool RunNormally = true;
@@ -19,29 +20,17 @@ namespace jCaballol94.IKsolver
         private Vector3 _rootBasePosition;
         private Quaternion _rootBaseRotation;
 
-        private Constraint[] _constraints;
-
         private void Start()
         {
-            // Find all the constraints
-            _constraints = GetComponents<Constraint>();
-
             // Find the first bone of the hierarchy
             _root = GetComponentInChildren<Bone>();
             // Explore the rest of the hierarchy from there
             _root.ExploreHierarchy();
-
-            // Now that we know the hierarchy, register the messages accordingly
-            for (int i = 0; i < _constraints.Length; ++i)
-            {
-                _constraints[i].RegisterMessages();
-            }
-
             // Initialize all the bones
             _root.Initialize();
 
-            _rootBasePosition = _root.transform.parent.InverseTransformPoint(_root.Position);
-            _rootBaseRotation = Quaternion.Inverse(_root.transform.parent.rotation) * _root.Rotation;
+            _rootBasePosition = transform.InverseTransformPoint(_root.Position);
+            _rootBaseRotation = Quaternion.Inverse(transform.rotation) * _root.Rotation;
         }
 
         private void LateUpdate()
@@ -59,8 +48,8 @@ namespace jCaballol94.IKsolver
 
                 if (PullRoots)
                 {
-                    _root.Position = _root.transform.parent.TransformPoint(_rootBasePosition);
-                    _root.transform.localRotation = _root.transform.parent.rotation * _rootBaseRotation;
+                    _root.Position = Vector3.Lerp(_root.Position, transform.TransformPoint(_rootBasePosition), _rootPull);
+                    _root.Rotation = Quaternion.Slerp(_root.Rotation, transform.rotation * _rootBaseRotation, _rootPull);
                     _root.PullRoot();
                     PullRoots = false;
                 }

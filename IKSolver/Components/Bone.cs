@@ -19,12 +19,6 @@ namespace jCaballol94.IKsolver
         private float _length;
         private Quaternion _realBoneRotation;
 
-        public readonly UnityEvent onPoseInitialized = new UnityEvent();
-        public readonly UnityEvent onPullEnds = new UnityEvent();
-        public readonly UnityEvent onEndsPulled = new UnityEvent();
-        public readonly UnityEvent onPullRoot = new UnityEvent();
-        public readonly UnityEvent onRootPulled = new UnityEvent();
-
         public void ExploreHierarchy ()
         {
             ExploreHierarchy(transform);
@@ -64,8 +58,6 @@ namespace jCaballol94.IKsolver
             var target = GetTargetPoint();
             Rotation = Quaternion.LookRotation(target - Position);
 
-            onPoseInitialized.Invoke();
-
             _realBoneRotation = Quaternion.Inverse(Rotation) * transform.rotation;
         }
 
@@ -76,8 +68,6 @@ namespace jCaballol94.IKsolver
             {
                 children[i].PullEnds();
             }
-
-            onPullEnds.Invoke();
 
             if (children.Count > 0)
             {
@@ -99,8 +89,6 @@ namespace jCaballol94.IKsolver
                 Position = target.position;
                 Rotation = target.rotation;
             }
-
-            onEndsPulled.Invoke();
         }
 
         public Vector3 GetDesiredParentPosition ()
@@ -118,8 +106,6 @@ namespace jCaballol94.IKsolver
 
         public void PullRoot()
         {
-            onPullRoot.Invoke();
-
             for (int i = 0; i < children.Count; ++i)
             {
                 // Pull all the children towards me
@@ -127,8 +113,6 @@ namespace jCaballol94.IKsolver
                 toChild.Normalize();
                 children[i].Position = Position + toChild * children[i]._length;
             }
-
-            onRootPulled.Invoke();
 
             for (int i = 0; i < children.Count; ++i)
             {
@@ -140,7 +124,6 @@ namespace jCaballol94.IKsolver
         public void ApplyTransform()
         {
             // Apply my values to the real bone
-            transform.position = Position;
             transform.rotation = Rotation * _realBoneRotation;
 
             // Allow the children to apply their values to their bones
@@ -168,15 +151,21 @@ namespace jCaballol94.IKsolver
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.white;
-            Gizmos.DrawWireSphere(Position, 0.01f);
-            Gizmos.DrawLine(Position, Position + Rotation * Vector3.up * 0.1f);
-            Gizmos.DrawLine(Position, Position + Rotation * Vector3.right * 0.1f);
-
-            if (Parent)
+            if (Application.isPlaying)
             {
-                Gizmos.DrawLine(Position, Parent.Position);
-            }
+                Gizmos.DrawWireSphere(Position, 0.01f);
+                Gizmos.DrawLine(Position, Position + Rotation * Vector3.up * 0.1f);
+                Gizmos.DrawLine(Position, Position + Rotation * Vector3.right * 0.1f);
 
+                if (Parent)
+                {
+                    Gizmos.DrawLine(Position, Parent.Position);
+                }
+            }
+            else
+            {
+                Gizmos.DrawWireSphere(transform.position, 0.01f);
+            }
             if (target)
             {
                 Gizmos.color = Color.green;
