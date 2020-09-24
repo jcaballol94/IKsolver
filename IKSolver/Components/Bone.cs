@@ -61,8 +61,13 @@ namespace jCaballol94.IKsolver
             }
 
             // Orient myself based on the position of the children
-            var target = GetTargetPoint();
-            Rotation = Quaternion.LookRotation(target - Position, Rotation * Vector3.forward);
+            var targetPoint = GetTargetPoint();
+            Rotation = Quaternion.LookRotation(targetPoint - Position, Rotation * Vector3.forward);
+
+            if (target)
+            {
+                Rotation = target.rotation;
+            }
 
             onPostInitialize.Invoke();
 
