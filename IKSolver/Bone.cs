@@ -33,7 +33,7 @@ namespace jCaballol94.IKsolver
                 {
                     childBone.ExploreHierarchy(/*constraints*/);
                     childBone.Parent = this;
-                    ProcessChild(childBone);
+                    children.Add(childBone);
                 }
                 else
                 {
@@ -41,12 +41,6 @@ namespace jCaballol94.IKsolver
                 }
             }
         }
-
-        protected virtual void ProcessChild (Bone child)
-        {
-            children.Add(child);
-        }
-
         public virtual void Initialize()
         {
             // Setup the position

@@ -4168,9 +4168,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 8693681754278652314}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 032b5ba56f0347e44a81e64ff2d1e1e1, type: 3}
+  m_Script: {fileID: 11500000, guid: 77087a28bf3e95841af321141de42e5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _boneA: {fileID: 2778352332620635431}
+  _boneB: {fileID: 5317458903437211674}
 --- !u!4 &8758231136461573015
 Transform:
   m_ObjectHideFlags: 0
