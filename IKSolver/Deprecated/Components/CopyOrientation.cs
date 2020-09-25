@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace jCaballol94.IKsolver
+namespace jCaballol94.IKsolverDeprecated
 {
-    [AddComponentMenu("IKSolver/Constraints/Copy Orientation")]
+    [AddComponentMenu("IKSolver/Deprecated/Constraints/Copy Orientation")]
     public class CopyOrientation : Constraint
     {
         [SerializeField] private Bone _target;

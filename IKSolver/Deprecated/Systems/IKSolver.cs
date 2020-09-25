@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace jCaballol94.IKsolver
+namespace jCaballol94.IKsolverDeprecated
 {
     public abstract class IKSolver : MonoBehaviour
     {

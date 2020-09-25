@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace jCaballol94.IKsolver
+namespace jCaballol94.IKsolverDeprecated
 {
-    [AddComponentMenu("IKSolver/System")]
+    [AddComponentMenu("IKSolver/Deprecated/System")]
     public class IKSystem : MonoBehaviour
     {
         [SerializeField] private int _numIterations = 10;

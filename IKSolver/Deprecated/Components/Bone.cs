@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace jCaballol94.IKsolver
+namespace jCaballol94.IKsolverDeprecated
 {
-    [AddComponentMenu("IKSolver/Bone")]
+    [AddComponentMenu("IKSolver/Deprecated/Bone")]
     public class Bone : MonoBehaviour
     {
         public Transform target;

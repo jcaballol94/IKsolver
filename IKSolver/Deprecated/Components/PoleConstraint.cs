@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace jCaballol94.IKsolver
+namespace jCaballol94.IKsolverDeprecated
 {
-    [AddComponentMenu("IKSolver/Constraints/Pole")]
+    [AddComponentMenu("IKSolver/Deprecated/Constraints/Pole")]
     public class PoleConstraint : Constraint
     {
         [SerializeField] private Transform _pole;

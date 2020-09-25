@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace jCaballol94.IKsolver
+namespace jCaballol94.IKsolverDeprecated
 {
     [RequireComponent(typeof(Bone))]
     public abstract class Constraint : MonoBehaviour
