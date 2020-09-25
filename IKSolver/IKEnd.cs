@@ -11,6 +11,12 @@ namespace jCaballol94.IKsolver
 
         private Quaternion _targetLocalRotation;
 
+        public override void Initialize()
+        {
+            orientationProvider = this;
+            base.Initialize();
+        }
+
         protected override void InitializeRotation()
         {
             var rotation = Quaternion.LookRotation(Parent.GetForwardVector(), Parent.GetUpVector());
