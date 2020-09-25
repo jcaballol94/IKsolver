@@ -8,16 +8,15 @@ namespace jCaballol94.IKsolver
     [AddComponentMenu("IKSolver/Bone")]
     public class Bone : MonoBehaviour
     {
-        public Transform target;
-
         public Vector3 Position { get; set; }
 
         public Bone Parent { get; set; }
         public readonly List<Bone> children = new List<Bone>();
 
-        private float _length;
+        public IOrientationProvider orientationProvider;
+
+        protected float _length;
         private Quaternion _realBoneRotation;
-        private Quaternion _targetLocalRotation;
 
         public void ExploreHierarchy (/*List<Constraint> constraints*/)
         {
@@ -34,7 +33,7 @@ namespace jCaballol94.IKsolver
                 {
                     childBone.ExploreHierarchy(/*constraints*/);
                     childBone.Parent = this;
-                    children.Add(childBone);
+                    ProcessChild(childBone);
                 }
                 else
                 {
@@ -43,7 +42,12 @@ namespace jCaballol94.IKsolver
             }
         }
 
-        public void Initialize(Vector3 preferredUp)
+        protected virtual void ProcessChild (Bone child)
+        {
+            children.Add(child);
+        }
+
+        public virtual void Initialize()
         {
             // Setup the position
             Position = transform.position;
@@ -51,36 +55,20 @@ namespace jCaballol94.IKsolver
             // Initialize the children first
             for (int i = 0; i < children.Count; ++i)
             {
-                children[i].Initialize(preferredUp);
+                children[i].Initialize();
                 children[i]._length = Vector3.Distance(children[i].Position, Position);
             }
 
             InitializeRotation();
         }
 
-        private void InitializeRotation()
+        protected virtual void InitializeRotation()
         {
-            Quaternion rotation;
-            if (children.Count > 0)
-            {
-                var targetPoint = GetTargetPoint();
-                rotation = Quaternion.LookRotation(targetPoint - Position, Vector3.forward);
-            }
-            else
-            {
-                var targetPoint = Parent.GetTargetPoint();
-                rotation = Quaternion.LookRotation(targetPoint - Parent.Position, Vector3.forward);
-            }
-
-            if (target)
-            {
-                _targetLocalRotation = Quaternion.Inverse(target.rotation) * rotation;
-            }
-
+            var rotation = Quaternion.LookRotation(GetForwardVector(), GetUpVector());
             _realBoneRotation = Quaternion.Inverse(rotation) * transform.rotation;
         }
 
-        public void PullEnds()
+        public virtual void PullEnds()
         {
             // First update the children
             for (int i = 0; i < children.Count; ++i)
@@ -98,12 +86,6 @@ namespace jCaballol94.IKsolver
                 }
                 Position = newPosition / children.Count;
             }
-
-            if (target)
-            {
-                // If I have a target, go there
-                Position = target.position;
-            }
         }
 
         public Vector3 GetDesiredParentPosition ()
@@ -119,7 +101,7 @@ namespace jCaballol94.IKsolver
             return Vector3.zero;
         }
 
-        public void PullRoot()
+        public virtual void PullRoot()
         {
             if (Parent)
             {
@@ -137,15 +119,7 @@ namespace jCaballol94.IKsolver
         public void ApplyTransform()
         {
             // Apply my values to the real bone
-            if (target)
-            {
-                transform.rotation = target.rotation * _targetLocalRotation * _realBoneRotation;
-            }
-            else
-            {
-                var targetPoint = GetTargetPoint();
-                transform.rotation = Quaternion.LookRotation(targetPoint, Vector3.forward) * _realBoneRotation;
-            }
+            transform.rotation = Quaternion.LookRotation(GetForwardVector(), GetUpVector()) * _realBoneRotation;
 
             // Allow the children to apply their values to their bones
             for(int i = 0; i < children.Count; ++i)
@@ -154,40 +128,49 @@ namespace jCaballol94.IKsolver
             }
         }
 
-        public Vector3 GetTargetPoint()
+        public Vector3 GetUpVector()
         {
-            var targetPoint = Vector3.zero;
-            for (int i = 0; i < children.Count; ++i)
+            if (orientationProvider != null)
             {
-                targetPoint += children[i].Position;
+                return orientationProvider.UpVector;
             }
-
-            if (children.Count > 0f)
-            {
-                return targetPoint / children.Count;
-            }
-            return Position;
+            return Vector3.forward;
         }
 
-        private void OnDrawGizmos()
+        public virtual Vector3 GetForwardVector()
+        {
+            if (children.Count > 0)
+            {
+                var targetPoint = Vector3.zero;
+                for (int i = 0; i < children.Count; ++i)
+                {
+                    targetPoint += children[i].Position;
+                }
+                targetPoint /= children.Count;
+                return (targetPoint - Position).normalized;
+            }
+            return Parent.GetForwardVector();
+        }
+
+        protected virtual void OnDrawGizmos()
         {
             Gizmos.color = Color.white;
             if (Application.isPlaying)
             {
                 Gizmos.DrawWireSphere(Position, 0.01f);
+
                 if (Parent)
                 {
                     Gizmos.DrawLine(Position, Parent.Position);
                 }
+
+                Gizmos.color = Color.blue;
+                Gizmos.DrawLine(Position, Position + GetUpVector() * 0.1f);
+                Gizmos.DrawLine(Position, Position + GetForwardVector() * 0.1f);
             }
             else
             {
                 Gizmos.DrawWireSphere(transform.position, 0.01f);
-            }
-            if (target)
-            {
-                Gizmos.color = Color.green;
-                Gizmos.DrawWireSphere(target.position, 0.05f);
             }
         }
     }

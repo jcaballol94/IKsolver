@@ -32,7 +32,7 @@ namespace jCaballol94.IKsolver
             //}
 
             // Initialize all the bones
-            _root.Initialize(transform.forward);
+            _root.Initialize();
 
             _rootBasePosition = transform.InverseTransformPoint(_root.Position);
         }
